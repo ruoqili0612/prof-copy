@@ -8,9 +8,9 @@ execute:
 book:
   title: "YOUR PROJECT TITLE"
   author:
-    - AUTHOR1 (UNI1)
+    - Ruoqi Li (rl3489)
     - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+  repo-url: https://github.com/ruoqili0612/prof-copy
   date: today
   page-footer:
     right: |
