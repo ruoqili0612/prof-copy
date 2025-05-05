@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>YOUR PROJECT TITLE - 5&nbsp; Conclusion</title>
+<title>Application of LIME and SHAP to Credit Scoring Models - 5&nbsp; Conclusion</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./d3graph.html" rel="prev">
+<link href="./chap2.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -69,6 +69,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
+<link rel="stylesheet" href="styles/bootstrap.min.css">
 </head>
 
 <body class="nav-sidebar floating">
@@ -95,7 +96,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">YOUR PROJECT TITLE</a> 
+      <a href="./">Application of LIME and SHAP to Credit Scoring Models</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/ruoqili0612/prof-copy" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -122,14 +123,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./results.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span></a>
+  <a href="./chap1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modeling</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./d3graph.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interactive graph</span></span></a>
+  <a href="./chap2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interpretability Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -144,7 +145,13 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link active" data-scroll-target="#limitations"><span class="header-section-number">5.1</span> Limitations</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ruoqili0612/prof-copy/edit/main/conclusion.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ruoqili0612/prof-copy/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -168,8 +175,17 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<ul>
+<li>This project demonstrates how interpretable machine learning methods like LIME and SHAP can be effectively applied to credit scoring models to improve both performance and transparency. Among the models tested, logistic regression proved to be more reliable than the decision tree, especially in identifying high-risk applicants. Key features such as application status, credit history, loan duration, and installment rate were found to have the greatest influence on predictions. The interpretability results also show that practical financial factors like longer repayment periods, lack of collateral, and additional debt obligations play a consistent role in pushing predictions toward high risk. Overall, this approach supports more informed and responsible decision-making in credit risk assessment by combining strong model performance with clear explanations.</li>
+</ul>
+<section id="limitations" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="limitations"><span class="header-section-number">5.1</span> Limitations</h2>
+<ul>
+<li>One limitation of this project is the reliance on a relatively small and dated dataset, which may not fully reflect the complexity and diversity of modern credit environments. The features used are static and do not account for changes in borrower behavior or financial status over time, which could impact prediction accuracy in real-world applications. Additionally, while LIME and SHAP offer local and global interpretability, their effectiveness may be reduced when features are highly correlated or when model behavior is strongly nonlinear. Further work is needed to explore more advanced models and validate findings using larger and more representative datasets.</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -583,8 +599,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./d3graph.html" class="pagination-link" aria-label="Interactive graph">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interactive graph</span></span>
+      <a href="./chap2.html" class="pagination-link" aria-label="Interpretability Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interpretability Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -598,7 +614,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/ruoqili0612/prof-copy/edit/main/conclusion.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ruoqili0612/prof-copy/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ruoqili0612/prof-copy/edit/main/conclusion.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ruoqili0612/prof-copy/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

@@ -1,18 +1,23 @@
 # Data
 
-## Environment Setup
-```{r setup}
-library(cli)
+## Data Loading and Preprocessing
+
+-   Assign descriptive column names matching the project proposal’s features.
+
+-   Convert the target ‘CreditRisk’ to a two‐level factor (“Bad” vs “Good”), focusing on the “Bad” class as the event of interest.
+
+-   Identify categorical columns and convert them into unordered factors with simplified level labels (L1, L2, …) to prepare for modeling
+
+```{r chunk1,  echo=TRUE,message=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+library(kableExtra)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(caret)     
 library(rpart)     
 library(rpart.plot) 
 library(DALEX)      
 library(lime)       
-library(ggplot2)  
-```
-
-## Data Loading and Preprocessing
-```{r}
+library(ggplot2) 
 # Load the German credit dataset from the UCI repository
 url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data"
 data <- read.table(url, header = FALSE, stringsAsFactors = FALSE, strip.white = TRUE)
@@ -47,8 +52,42 @@ data[categorical_cols] <- lapply(data[categorical_cols], function(x) {
 })
 ```
 
-## Data Splitting
+### Summary data after preprocessing
+
 ```{r}
+library(dplyr)
+library(purrr)
+library(tibble)
+library(DT)
+
+glaze_df <- tibble(
+  Variable = names(data),
+  Type     = map_chr(data, ~ class(.x)[1]),
+  Missing  = map_int(data, ~ sum(is.na(.x))),
+  Unique   = map_int(data, ~ n_distinct(.x)),
+  Sample   = map_chr(data, ~ paste0(head(.x, 3), collapse = ", "))
+)
+
+DT::datatable(
+  glaze_df,
+  options = list(
+    scrollX    = TRUE,    # horizontal scrolling
+    pageLength = 10       # rows per “page”
+  ),
+  class = "stripe hover compact"
+)
+```
+## Data Splitting
+
+Split data into 70% training and 30% testing to evaluate model generalization.
+
+-   Use stratified sampling to preserve class ratios.
+
+-   Remove any factor columns in training with only one level to avoid zero‐variance predictors.
+
+-   Ensure test set uses the same predictor columns as training.
+
+```{r chunk2,  echo=TRUE,message=FALSE, warning=FALSE, results='hide'}
 set.seed(2023)
 train_idx <- createDataPartition(data$CreditRisk, 
                                 p = 0.7, 
@@ -74,56 +113,87 @@ test_data <- test_data[, colnames(train_data)]  # Keep feature set consistent
 
 # Validate class distribution
 cat("Training set distribution:\n")
-prop.table(table(train_data$CreditRisk))  # 应接近70% Good, 30% Bad
+prop.table(table(train_data$CreditRisk)) 
 cat("\nTest set distribution:\n")
 prop.table(table(test_data$CreditRisk))
+
+saveRDS(train_data, "train_data.rds")
+saveRDS(test_data,  "test_data.rds")
 ```
 
 ## Description
+
+### Origin & File
+
 ```{r}
-cli_h1("German Credit Dataset Description")
+df_origin <- data.frame(
+  File        = "german.data",
+  Description = "Original dataset provided by Prof. Hofmann, containing mixed symbolic and categorical attributes for credit-risk prediction.",
+  check.names     = FALSE,
+  stringsAsFactors= FALSE
+)
+df_origin %>%
+  kable(format = "html", escape = FALSE, align = c("l","l")) %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("condensed","hover")) %>%
+  row_spec(0, extra_css = "font-size:14pt; font-weight:bold;") %>%   # header bold 14pt
+  row_spec(1, extra_css = "font-size:12pt;")
 
-cli_h2("Origin & File")
-cli_ul(c(
-  "`german.data`: Original dataset provided by Prof. Hofmann, containing mixed symbolic and categorical attributes for credit risk prediction"
-))
+```
 
-cli_h2("Instances")
-cli_text("• 1,000 borrower records; each is one credit application.")
+### Instances
 
-cli_h2("Attributes (20 predictors + 1 target)")
-cli_ul(c(
-  "1. Status of existing checking account",
-  "2. Duration in months",
-  "3. Credit history",
-  "4. Purpose of the loan",
-  "5. Credit amount",
-  "6. Savings account / bonds",
-  "7. Present employment duration",
-  "8. Installment rate (% of disposable income)",
-  "9. Personal status and sex",
-  "10. Other debtors / guarantors",
-  "11. Present residence duration",
-  "12. Property ownership",
-  "13. Age in years",
-  "14. Other installment plans",
-  "15. Housing type",
-  "16. Number of existing credits at this bank",
-  "17. Job category (ordered)",
-  "18. Number of people liable for maintenance",
-  "19. Telephone availability (yes/no)",
-  "20. Foreign worker status (yes/no)",
-  "21. CreditRisk (target: Good vs. Bad)"
-))
+```{r}
+df_instances <- data.frame(
+  `Total Records` = "1,000",
+  Description     = "Each record is one loan applicant profile",
+  check.names     = FALSE,
+  stringsAsFactors= FALSE
+)
+df_instances %>%
+  kable(format = "html", escape = FALSE, align = c("c","l")) %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped","hover","condensed")) %>%
+  row_spec(0, extra_css = "font-size:14pt; font-weight:bold;") %>%   # header bold 14pt
+  column_spec(1, extra_css = "font-size:12pt; font-weight:bold;") %>% 
+  column_spec(2, extra_css = "font-size:12pt;")
 
-cli_h2("Target & Cost Matrix")
-cli_text("• Classes: 1 = Good, 2 = Bad")
-cli_text("")
-cli_text("  | Actual \\ Predicted | Good | Bad |")
-cli_text("  | :---: | :---: | :---: |")
-cli_text("  | **Good** | 0 | 1 |")
-cli_text("  | **Bad** | 5 | 0 |")
+```
 
-cli_h2("Missing Values")
-cli_text("• None")
+### Predictor Variables
+
+```{r}
+features <- data.frame(
+  No      = 1:21,
+  Feature = c(
+    "Status of existing checking account",
+    "Duration in months",
+    "Credit history",
+    "Purpose of the loan",
+    "Credit amount",
+    "Savings account / bonds",
+    "Present employment duration",
+    "Installment rate (% of disposable income)",
+    "Personal status and sex",
+    "Other debtors / guarantors",
+    "Present residence duration",
+    "Property ownership",
+    "Age in years",
+    "Other installment plans",
+    "Housing type",
+    "Number of existing credits at this bank",
+    "Job category (ordered)",
+    "Number of dependents",
+    "Telephone availability (yes/no)",
+    "Foreign worker status (yes/no)",
+    "CreditRisk (target: Good vs. Bad)"
+  ),
+  check.names     = FALSE,
+  stringsAsFactors= FALSE
+)
+features %>%
+  kable(format = "html", escape = FALSE, align = c("c","l")) %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped","hover","condensed")) %>%
+  row_spec(0, extra_css = "font-size:14pt; font-weight:bold;") %>%   # header bold 14pt
+  column_spec(1, extra_css = "font-size:12pt; font-weight:bold;") %>% 
+  column_spec(2, extra_css = "font-size:12pt;")
+
 ```

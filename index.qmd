@@ -1,2 +1,41 @@
 # Introduction
-intro
+
+This project aims to build interpretable predictive models for credit risk assessment using the German Credit dataset provided by the UCI Machine Learning Repository. The primary goal is to classify loan applicants as "Good" or "Bad" risks, addressing real-world challenges such as class imbalance and ensuring model interpretability for transparent decision-making.
+
+Specifically, we conduct the following key steps:
+
+## Data Preparation
+
+-   Loading the dataset and assigning descriptive column names.
+
+-   Converting the target variable (CreditRisk) into a binary factor for clear interpretation.
+
+-   Transforming categorical variables into factors with simplified level labels to enhance modeling efficiency.
+
+## Data Splitting and Validation
+
+-   Creating stratified training (70%) and testing (30%) datasets to accurately reflect the original data distribution.
+
+-   Ensuring feature consistency by removing variables with insufficient variability.
+
+## Modeling Approaches
+
+-   Logistic Regression: Applying class-weighting to manage imbalance, assessing multicollinearity via VIF, and evaluating feature importance.
+
+-   Decision Tree: Training and pruning a CART model for simplicity and ease of interpretation.
+
+## Performance Evaluation
+
+-   Evaluating models using metrics including Accuracy, Sensitivity, Specificity, and ROC-AUC.
+
+-   Conducting comparative ROC analyses to select the best-performing model.
+
+## Interpretability Analysis
+
+-   Employing SHAP-based global and local explanations (DALEX) to understand logistic regression predictions.
+
+-   Utilizing LIME to provide intuitive local explanations for both logistic regression and decision tree predictions.
+
+
+## Goal
+-   Through these analyses, the project delivers accurate and transparent models, facilitating reliable decision-making in credit risk management.

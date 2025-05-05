@@ -19,13 +19,14 @@ book:
   chapters:
     - index.qmd
     - data.qmd
-    - results.qmd
-    - d3graph.qmd
+    - chap1.qmd
+    - chap2.qmd
     - conclusion.qmd
 
 format:
   html:
-    theme: cosmo
+    theme: null
+    css: styles/bootstrap.min.css
     code-fold: true
 
 

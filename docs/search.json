@@ -2,9 +2,69 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "YOUR PROJECT TITLE",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
     "section": "",
-    "text": "1 Introduction\nintro",
+    "text": "1 Introduction\nThis project aims to build interpretable predictive models for credit risk assessment using the German Credit dataset provided by the UCI Machine Learning Repository. The primary goal is to classify loan applicants as “Good” or “Bad” risks, addressing real-world challenges such as class imbalance and ensuring model interpretability for transparent decision-making.\nSpecifically, we conduct the following key steps:",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#data-preparation",
+    "href": "index.html#data-preparation",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.1 Data Preparation",
+    "text": "1.1 Data Preparation\n\nLoading the dataset and assigning descriptive column names.\nConverting the target variable (CreditRisk) into a binary factor for clear interpretation.\nTransforming categorical variables into factors with simplified level labels to enhance modeling efficiency.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#data-splitting-and-validation",
+    "href": "index.html#data-splitting-and-validation",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.2 Data Splitting and Validation",
+    "text": "1.2 Data Splitting and Validation\n\nCreating stratified training (70%) and testing (30%) datasets to accurately reflect the original data distribution.\nEnsuring feature consistency by removing variables with insufficient variability.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#modeling-approaches",
+    "href": "index.html#modeling-approaches",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.3 Modeling Approaches",
+    "text": "1.3 Modeling Approaches\n\nLogistic Regression: Applying class-weighting to manage imbalance, assessing multicollinearity via VIF, and evaluating feature importance.\nDecision Tree: Training and pruning a CART model for simplicity and ease of interpretation.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#performance-evaluation",
+    "href": "index.html#performance-evaluation",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.4 Performance Evaluation",
+    "text": "1.4 Performance Evaluation\n\nEvaluating models using metrics including Accuracy, Sensitivity, Specificity, and ROC-AUC.\nConducting comparative ROC analyses to select the best-performing model.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#interpretability-analysis",
+    "href": "index.html#interpretability-analysis",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.5 Interpretability Analysis",
+    "text": "1.5 Interpretability Analysis\n\nEmploying SHAP-based global and local explanations (DALEX) to understand logistic regression predictions.\nUtilizing LIME to provide intuitive local explanations for both logistic regression and decision tree predictions.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#goal",
+    "href": "index.html#goal",
+    "title": "Application of LIME and SHAP to Credit Scoring Models",
+    "section": "1.6 Goal",
+    "text": "1.6 Goal\n\nThrough these analyses, the project delivers accurate and transparent models, facilitating reliable decision-making in credit risk management.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -14,39 +74,139 @@
     "href": "data.html",
     "title": "2  Data",
     "section": "",
-    "text": "2.1 Description",
+    "text": "2.1 Data Loading and Preprocessing\nCode\nlibrary(knitr)\nlibrary(kableExtra)\nknitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)\nlibrary(caret)     \nlibrary(rpart)     \nlibrary(rpart.plot) \nlibrary(DALEX)      \nlibrary(lime)       \nlibrary(ggplot2) \n# Load the German credit dataset from the UCI repository\nurl &lt;- \"https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data\"\ndata &lt;- read.table(url, header = FALSE, stringsAsFactors = FALSE, strip.white = TRUE)\n\n# Assign descriptive column names\ncol_names &lt;- c(\n  \"Status\", \"Duration\", \"CreditHistory\", \"Purpose\", \"CreditAmount\", \"Savings\",\n  \"EmploymentDuration\", \"InstallmentRate\", \"PersonalStatus\", \"OtherDebtors\",\n  \"ResidenceDuration\", \"Property\", \"Age\", \"OtherInstallmentPlans\", \"Housing\",\n  \"ExistingCreditsCount\", \"Job\", \"Dependents\", \"Telephone\", \"ForeignWorker\", \"CreditRisk\"\n)\nnames(data) &lt;- col_names\n\n# Convert CreditRisk to a factor with levels Bad (2) and Good (1)\ndata$CreditRisk &lt;- factor(data$CreditRisk, \n                         levels = c(2, 1), \n                         labels = c(\"Bad\", \"Good\"))  # 'Bad' is the class of interest\n\n# Specify which columns are categorical\ncategorical_cols &lt;- c(\n  \"Status\", \"CreditHistory\", \"Purpose\", \"Savings\", \"EmploymentDuration\",\n  \"InstallmentRate\", \"PersonalStatus\", \"OtherDebtors\", \"ResidenceDuration\",\n  \"Property\", \"OtherInstallmentPlans\", \"Housing\", \"ExistingCreditsCount\",\n  \"Job\", \"Telephone\", \"ForeignWorker\"\n)\n\n# Convert these columns to factors with simplified level names\ndata[categorical_cols] &lt;- lapply(data[categorical_cols], function(x) {\n  x &lt;- as.factor(x)\n  levels(x) &lt;- paste0(\"L\", seq_along(levels(x)))  # Simplify factor levels to L1, L2, …\n  return(x)\n})",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
   },
   {
-    "objectID": "data.html#missing-value-analysis",
-    "href": "data.html#missing-value-analysis",
+    "objectID": "data.html#data-loading-and-preprocessing",
+    "href": "data.html#data-loading-and-preprocessing",
     "title": "2  Data",
-    "section": "2.2 Missing value analysis",
-    "text": "2.2 Missing value analysis",
+    "section": "",
+    "text": "Assign descriptive column names matching the project proposal’s features.\nConvert the target ‘CreditRisk’ to a two‐level factor (“Bad” vs “Good”), focusing on the “Bad” class as the event of interest.\nIdentify categorical columns and convert them into unordered factors with simplified level labels (L1, L2, …) to prepare for modeling\n\n\n\n2.1.1 Summary data after preprocessing",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
   },
   {
-    "objectID": "results.html",
-    "href": "results.html",
-    "title": "3  Results",
-    "section": "",
-    "text": "3.1 First Result",
+    "objectID": "data.html#data-splitting",
+    "href": "data.html#data-splitting",
+    "title": "2  Data",
+    "section": "2.2 Data Splitting",
+    "text": "2.2 Data Splitting\nSplit data into 70% training and 30% testing to evaluate model generalization.\n\nUse stratified sampling to preserve class ratios.\nRemove any factor columns in training with only one level to avoid zero‐variance predictors.\nEnsure test set uses the same predictor columns as training.\n\n\n\nCode\nset.seed(2023)\ntrain_idx &lt;- createDataPartition(data$CreditRisk, \n                                p = 0.7, \n                                list = FALSE,\n                                times = 1)\ntrain_data &lt;- data[train_idx, ]\ntest_data &lt;- data[-train_idx, ]\n\n# Remove factor columns that have only one level\nremove_single_level &lt;- function(df) {\n  sapply(df, function(x) {\n    if(is.factor(x)) {\n      return(length(unique(x)) &gt; 1)\n    } else {\n      return(TRUE)\n    }\n  })\n}\n\nvalid_cols &lt;- remove_single_level(train_data)\ntrain_data &lt;- train_data[, valid_cols]\ntest_data &lt;- test_data[, colnames(train_data)]  # Keep feature set consistent\n\n# Validate class distribution\ncat(\"Training set distribution:\\n\")\nprop.table(table(train_data$CreditRisk)) \ncat(\"\\nTest set distribution:\\n\")\nprop.table(table(test_data$CreditRisk))\n\nsaveRDS(train_data, \"train_data.rds\")\nsaveRDS(test_data,  \"test_data.rds\")",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
   },
   {
-    "objectID": "results.html#second-result",
-    "href": "results.html#second-result",
-    "title": "3  Results",
-    "section": "3.2 Second Result",
-    "text": "3.2 Second Result",
+    "objectID": "data.html#description",
+    "href": "data.html#description",
+    "title": "2  Data",
+    "section": "2.3 Description",
+    "text": "2.3 Description\n\n2.3.1 Origin & File\n\n\n\n\n\nFile\nDescription\n\n\n\n\ngerman.data\nOriginal dataset provided by Prof. Hofmann, containing mixed symbolic and categorical attributes for credit-risk prediction.\n\n\n\n\n\n\n\n\n\n2.3.2 Instances\n\n\n\n\n\nTotal Records\nDescription\n\n\n\n\n1,000\nEach record is one loan applicant profile\n\n\n\n\n\n\n\n\n\n2.3.3 Predictor Variables\n\n\n\n\n\nNo\nFeature\n\n\n\n\n1\nStatus of existing checking account\n\n\n2\nDuration in months\n\n\n3\nCredit history\n\n\n4\nPurpose of the loan\n\n\n5\nCredit amount\n\n\n6\nSavings account / bonds\n\n\n7\nPresent employment duration\n\n\n8\nInstallment rate (% of disposable income)\n\n\n9\nPersonal status and sex\n\n\n10\nOther debtors / guarantors\n\n\n11\nPresent residence duration\n\n\n12\nProperty ownership\n\n\n13\nAge in years\n\n\n14\nOther installment plans\n\n\n15\nHousing type\n\n\n16\nNumber of existing credits at this bank\n\n\n17\nJob category (ordered)\n\n\n18\nNumber of dependents\n\n\n19\nTelephone availability (yes/no)\n\n\n20\nForeign worker status (yes/no)\n\n\n21\nCreditRisk (target: Good vs. Bad)",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+    ]
+  },
+  {
+    "objectID": "chap1.html",
+    "href": "chap1.html",
+    "title": "3  Modeling",
+    "section": "",
+    "text": "3.1 Logistic Regression Modeling\nCode\ntrain_data &lt;- readRDS(\"train_data.rds\")\ntest_data  &lt;- readRDS(\"test_data.rds\")\nmodel_weights &lt;- ifelse(train_data$CreditRisk == \"Bad\",\n                       sum(train_data$CreditRisk == \"Good\")/sum(train_data$CreditRisk == \"Bad\"),\n                       1)\nlr_model &lt;- glm(CreditRisk ~ .,\n               data = train_data,\n               family = binomial,\n               weights = model_weights)\nsummary(lr_model)\ncar::vif(lr_model)\n\nlibrary(caret)\nlibrary(tibble)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nlr_importance &lt;- varImp(lr_model)\n\nimp_df &lt;- lr_importance %&gt;%\n  rownames_to_column(\"Feature\") %&gt;%\n  rename(Importance = Overall)\n\nggplot(imp_df, aes(x = Importance, y = reorder(Feature, Importance))) +\n  geom_col(fill = \"steelblue\") +\n  labs(\n    title = \"Logistic Regression Feature Importance\",\n    x     = \"Importance Score\",\n    y     = \"Feature\"\n  ) +\n  theme_minimal() +\n  theme(\n    plot.title         = element_text(size = 14, face = \"bold\"),\n    axis.title         = element_text(size = 12, face = \"bold\"),\n    axis.text.y        = element_text(size = 8, margin = margin(r = 5)),\n    panel.grid.major.y = element_blank()\n  )",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Modeling</span>"
+    ]
+  },
+  {
+    "objectID": "chap1.html#logistic-regression-modeling",
+    "href": "chap1.html#logistic-regression-modeling",
+    "title": "3  Modeling",
+    "section": "",
+    "text": "Address class imbalance by up‐weighting the minority “Bad” class.\nTrain a weighted logistic regression model on all features.\nDiagnose model fit via summary and check multicollinearity (VIF).\nCompute and visualize feature importance to see which predictors drive the model.\n\n\n\n   Top feature importance from the logistic regression model\nStatus\nCreditHistory\nDuration\nInstallmentRate",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Modeling</span>"
+    ]
+  },
+  {
+    "objectID": "chap1.html#decision-tree-model",
+    "href": "chap1.html#decision-tree-model",
+    "title": "3  Modeling",
+    "section": "3.2 Decision Tree Model",
+    "text": "3.2 Decision Tree Model\n\nDefine tree complexity and cross‐validation parameters.\nTrain a classification tree using information‐gain splits.\nPrune the tree at the CP value minimizing cross‐validated error.\nVisualize the pruned tree to inspect decision rules and compare to LIME/SHAP explanations.\n\n\n\nCode\nlibrary(rpart)\nlibrary(rpart.plot)\ntree_control &lt;- rpart.control(\n  minsplit = 20,\n  minbucket = round(20/3),\n  cp = 0.005,\n  maxdepth = 4,\n  xval = 10\n)\n\n# 5.2 模型训练\ntree_model &lt;- rpart(\n  CreditRisk ~ .,\n  data = train_data,\n  method = \"class\",\n  parms = list(split = \"information\"),\n  control = tree_control\n)\n\n# 5.3 剪枝优化\nbest_cp &lt;- tree_model$cptable[which.min(tree_model$cptable[, \"xerror\"]), \"CP\"]\npruned_tree &lt;- prune(tree_model, cp = best_cp)\n\n# 5.4 可视化\nrpart.plot(pruned_tree, \n           type = 5, \n           extra = 106,\n           box.palette = \"GnBu\",\n           shadow.col = \"gray\")\n\n\n\n\n\n\n\n\n\n\n     classification rules for decision tree\nStatus\nDuration\nSavings\nCreditHistory",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Modeling</span>"
+    ]
+  },
+  {
+    "objectID": "chap1.html#model-evaluation-on-test-set",
+    "href": "chap1.html#model-evaluation-on-test-set",
+    "title": "3  Modeling",
+    "section": "3.3 Model Evaluation on Test Set",
+    "text": "3.3 Model Evaluation on Test Set\n\nLogistic Regression: predict probabilities, classify at 0.5 threshold, and compute confusion matrix treating “Bad” as the positive class.\nDecision Tree: predict class labels and compute confusion matrix similarly.\n\n\n\nCode\nlibrary(caret)\nlr_pred &lt;- predict(lr_model, test_data, type = \"response\")\nlr_pred_class &lt;- factor(ifelse(lr_pred &gt; 0.5, \"Good\", \"Bad\"),\n                       levels = c(\"Bad\", \"Good\"))\nlr_conf &lt;- confusionMatrix(lr_pred_class, test_data$CreditRisk, positive = \"Bad\")\n\n\ntree_pred &lt;- predict(pruned_tree, test_data, type = \"class\")\ntree_conf &lt;- confusionMatrix(tree_pred, test_data$CreditRisk, positive = \"Bad\")\n\n\n\n3.3.1 Confusion Matrices\n\n\nCode\n# Load required packages\nlibrary(dplyr)\nlibrary(ggplot2)\n\n# 1. Tidy up the confusion tables\ntbl_lr &lt;- as.data.frame(lr_conf$table) %&gt;%\n  rename(Actual = Reference, Predicted = Prediction, Count = Freq) %&gt;%\n  mutate(Model = \"Logistic Regression\")\n\ntbl_tree &lt;- as.data.frame(tree_conf$table) %&gt;%\n  rename(Actual = Reference, Predicted = Prediction, Count = Freq) %&gt;%\n  mutate(Model = \"Decision Tree\")\n\ncm_vis_df &lt;- bind_rows(tbl_lr, tbl_tree)\n\n# 2. Plot side-by-side heatmaps\nggplot(cm_vis_df, aes(x = Actual, y = Predicted, fill = Count)) +\n  geom_tile(color = \"white\") +\n  geom_text(aes(label = Count), size = 5) +\n  facet_wrap(~ Model) +\n  scale_fill_gradient(low = \"white\", high = \"steelblue\") +\n  labs(\n    title = \"Logistic Regression vs. Decision Tree\",\n    x     = \"Actual Class\",\n    y     = \"Predicted Class\",\n    fill  = \"Count\"\n  ) +\n  theme_minimal() +\n  theme(\n    plot.title    = element_text(size = 14, face = \"bold\"),\n    axis.title    = element_text(size = 12),\n    axis.text     = element_text(size = 10),\n    strip.text    = element_text(size = 12, face = \"bold\"),\n    panel.grid    = element_blank()\n  )\n\n\n\n\n\n\n\n\n\n\nLogistic Regression demonstrates stronger predictive performance compared to the Decision Tree.\nDecision Tree struggles more with false positives, while Logistic Regression has higher accuracy and reliability in predictions.\n\n\n\n3.3.2 ROC Analysis\n\n\nCode\nlibrary(pROC)\nlibrary(ggplot2)\nlr_probs &lt;- predict(lr_model, test_data, type = \"response\")\nroc_lr &lt;- roc(response = test_data$CreditRisk, \n              predictor = lr_probs,\n              levels = c(\"Bad\", \"Good\"),\n              direction = \"&lt;\")\nplot(roc_lr, \n     print.auc = TRUE, \n     auc.polygon = TRUE, \n     max.auc.polygon = TRUE,\n     grid = TRUE,\n     print.thres = \"best\", \n     main = \"Logistic Regression ROC Curve\")\n\n\n\n\n\n\n\n\n\nCode\ntree_probs &lt;- predict(pruned_tree, test_data, type = \"prob\")[, \"Bad\"]\nroc_tree &lt;- roc(response = test_data$CreditRisk, \n                predictor = tree_probs,\n                levels = c(\"Good\", \"Bad\"),\n                direction = \"&lt;\")\nplot(roc_tree, \n     print.auc = TRUE, \n     auc.polygon = TRUE, \n     max.auc.polygon = TRUE,\n     grid = TRUE,\n     print.thres = \"best\", \n     main = \"Decision Tree ROC Curve\")\n\n\n\n\n\n\n\n\n\nCode\nggroc(list(Logistic = roc_lr, DecisionTree = roc_tree), legacy.axes = TRUE) +\n  geom_abline(slope = 1, intercept = 0, linetype = \"dashed\", color = \"red\") +\n  labs(title = \"ROC Curve Comparison\",\n       x = \"False Positive Rate (1 - Specificity)\",\n       y = \"True Positive Rate (Sensitivity)\") +\n  theme_minimal() +\n  scale_color_manual(values = c(\"#1f77b4\", \"#ff7f0e\")) +\n  annotate(\"text\", x = 0.7, y = 0.3, label = paste(\"Logistic AUC =\", round(roc_lr$auc, 3)), color = \"#1f77b4\") +\n  annotate(\"text\", x = 0.7, y = 0.2, label = paste(\"Tree AUC =\", round(roc_tree$auc, 3)), color = \"#ff7f0e\")\n\n\n\n\n\n\n\n\n\n\nROC curves were generated to assess how well our logistic regression and decision tree models distinguish between “Bad” and “Good” credit risks across all possible classification thresholds. The plot spans a false positive rate from 0 to 1 on the x-axis and a true positive rate from 0 to 1 on the y-axis, with a dashed red diagonal representing random guessing. The decision tree’s ROC (orange line, AUC = 0.724) rises sharply at low false positive rates but then follows a near-straight line toward (1,1), indicating moderate discrimination. In contrast, the logistic regression ROC (blue line, AUC = 0.782) consistently stays above the tree’s curve—especially between FPRs of 0.05 and 0.40—demonstrating stronger sensitivity at comparable specificity levels. This comparison shows that while both models outperform random, the logistic regression provides more reliable separation of credit risk cases across thresholds.\n\n\n\n3.3.3 Comparison of Model Performance Metrics\n\n\n\n\n\n\nModel\nAUC\nAccuracy\nSensitivity\nSpecificity\n\n\n\n\nLogistic Regression\n0.782\n0.723\n0.733\n0.719\n\n\nDecision Tree\n0.722\n0.733\n0.344\n0.900\n\n\n\n\n\n\n\n\n\nLogistic regression delivers superior overall discrimination and excels at identifying risky applicants by catching nearly twice as many bad cases as the decision tree. The decision tree, in contrast, more reliably approves good applicants but fails to detect the majority of high risk borrowers. As a result, when the priority is to minimize the chance of approving a bad credit, logistic regression is the preferred model; only when the cost of falsely rejecting a good borrower is overwhelmingly high might one consider the decision tree’s stronger approval rate for good applicants.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Modeling</span>"
+    ]
+  },
+  {
+    "objectID": "chap2.html",
+    "href": "chap2.html",
+    "title": "4  Interpretability Analysis",
+    "section": "",
+    "text": "4.1 SHAP + Logistic Regression\nCode\ntrain_data &lt;- readRDS(\"train_data.rds\")\ntest_data  &lt;- readRDS(\"test_data.rds\")\nlr_model     &lt;- readRDS(\"lr_model.rds\")\npruned_tree  &lt;- readRDS(\"pruned_tree.rds\")\nmodel_weights &lt;- readRDS(\"model_weights.rds\")\nlibrary(DALEX)\nlibrary(ggplot2)  \nlibrary(lime)\nlibrary(dplyr)\nlibrary(knitr)\nlibrary(kableExtra)\n\ny_binary &lt;- ifelse(train_data$CreditRisk == \"Bad\", 1, 0)\nexplainer_lr &lt;- DALEX::explain(\n  model   = lr_model,\n  data    = train_data[, setdiff(names(train_data), \"CreditRisk\")],\n  y       = y_binary,\n  label   = \"Logistic Regression\",\n  verbose = FALSE\n)",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interpretability Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "chap2.html#shap-logistic-regression",
+    "href": "chap2.html#shap-logistic-regression",
+    "title": "4  Interpretability Analysis",
+    "section": "",
+    "text": "Initialize a DALEX explainer for the trained logistic regression model by converting the binary target into 0/1 and linking the predictor data—so that we can later compute SHAP‐style explanations.\n\n\n\n4.1.1 Global SHAP‐style Importance (Permutation)\n\n\nCode\nvi_lr &lt;- DALEX::model_parts(\n  explainer = explainer_lr,\n  type      = \"variable_importance\",\n  B         = 100\n)\nplot(vi_lr) +\n  ggtitle(\"Logistic Regression Variable Importance (Permutation)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nPermutation-based variable importance was used to assess which predictors most influence our logistic regression credit‐risk model by measuring the drop in AUC when each feature is shuffled; when plotted, “Status” clearly causes the largest loss (around 0.85 → 0.75), followed by “CreditHistory,” “Purpose,” and “Duration,” whereas features like “Telephone,” “Dependents,” and “Housing” sit near the top with almost no AUC loss, indicating minimal importance—this ordering highlights that an applicant’s status and credit history are the key drivers of model performance, while peripheral attributes contribute little.\n\n\n\n4.1.2 Local SHAP for a Single Observation\n\n\nCode\nshap_local_lr &lt;- DALEX::predict_parts(\n  explainer       = explainer_lr,\n  new_observation = test_data[1, setdiff(names(test_data), \"CreditRisk\"), drop = FALSE],\n  type            = \"shap\"\n)\nplot(shap_local_lr) +\n  ggtitle(\"Local SHAP Explanation (Test Sample 1)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nLocal SHAP values were computed to understand how each feature in our logistic regression model pushes the prediction for a single test case toward “Bad” (positive contribution) or “Good” (negative contribution) credit risk; for this sample, a high credit history level (“CreditHistory = L5”), strong savings (“Savings = L5”), longer duration, older age, and basic property (“Property = L1”) all increase the likelihood of a “Bad” label, while poor status (“Status = L1”), a moderate number of existing credits (“ExistingCreditsCount = L2”), and a high installment rate (“InstallmentRate = L4”) counteract that by pushing the prediction toward “Good.”",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interpretability Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "chap2.html#configure-lime-for-decision-tree",
+    "href": "chap2.html#configure-lime-for-decision-tree",
+    "title": "4  Interpretability Analysis",
+    "section": "4.2 Configure LIME for Decision Tree",
+    "text": "4.2 Configure LIME for Decision Tree\n\nDefine the model_type and predict_model methods so that LIME knows how to call our pruned rpart tree and obtain class‐probability outputs.\n\n\n\nCode\nlibrary(lime)\nmodel_type.rpart &lt;- function(x, ...) \"classification\"\npredict_model.rpart &lt;- function(model, newdata, ...) {\n  as.data.frame(predict(model, newdata = newdata, type = \"prob\"))\n}\n\n\n\n4.2.1 Local LIME Explanation for Decision Tree\n\n\nCode\nlime_explainer_tree &lt;- lime(\n  x     = train_data[, setdiff(names(train_data), \"CreditRisk\")],\n  model = pruned_tree,\n  bin_continuous = TRUE\n)\nlime_explanation_tree &lt;- lime::explain(\n  x         = test_data[1, setdiff(names(test_data), \"CreditRisk\"), drop = FALSE],\n  explainer = lime_explainer_tree,\n  n_features = 5,\n  n_labels   = 1\n)\nplot_features(lime_explanation_tree) +\n  ggtitle(\"LIME Explanation for Decision Tree (Test Sample 1)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nLIME was applied to the pruned decision tree for a single test case to show which features support or contradict its “Good” prediction—here, a low application status (Status = L1) strongly contradicts the Good outcome, while strong savings (Savings = L5), shorter loan duration (Duration ≤ 12), excellent credit history (CreditHistory = L5), and housing status (Housing = L2) all contribute in favor of predicting “Good.”",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interpretability Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "chap2.html#global-lime-analysis-for-logistic-regression",
+    "href": "chap2.html#global-lime-analysis-for-logistic-regression",
+    "title": "4  Interpretability Analysis",
+    "section": "4.3 Global LIME Analysis for Logistic Regression",
+    "text": "4.3 Global LIME Analysis for Logistic Regression\n\nRetrain the logistic model (after dropping a column), register it with LIME, and generate explanations across the first 100 test instances to capture global patterns in feature contributions.\n\n\n\nCode\nlibrary(dplyr)\ntrain_data &lt;- train_data %&gt;% select(-Dependents)\ntest_data  &lt;- test_data  %&gt;% select(-Dependents)\nlr_model   &lt;- glm(\n  CreditRisk ~ .,\n  data   = train_data,\n  family = binomial,\n  weights = model_weights\n)\n\nmodel_type.glm &lt;- function(x, ...) \"classification\"\npredict_model.glm &lt;- function(model, newdata, ...) {\n  p &lt;- predict(model, newdata = newdata, type = \"response\")\n  data.frame(Bad = p, Good = 1 - p)\n}\n\nset.seed(2023)\ntrain_features &lt;- train_data %&gt;% select(-CreditRisk)\ntest_features  &lt;- test_data  %&gt;% select(-CreditRisk)\nlime_explainer  &lt;- lime(\n  x              = train_features,\n  model          = lr_model,\n  bin_continuous = TRUE,\n  quantile_bins  = FALSE,\n  n_bins         = 5\n)\nlime_explanations &lt;- lime::explain(\n  x             = test_features[1:100, ],\n  explainer     = lime_explainer,\n  n_labels      = 1,\n  n_features    = 10,\n  n_permutations = 5000,\n  distance_method = \"gower\",\n  kernel_width    = 0.75\n)\n\n\n\n4.3.1 Visualize global LIME importance and distributions\n\n\nCode\nglobal_importance &lt;- lime_explanations %&gt;%\n  group_by(feature) %&gt;%\n  summarise(\n    Avg_Weight = mean(abs(feature_weight)),\n    Frequency  = n() / nrow(test_features[1:100, ]),\n    .groups    = \"drop\"\n  ) %&gt;%\n  arrange(desc(Avg_Weight))\nggplot(global_importance, aes(x = reorder(feature, Avg_Weight), y = Avg_Weight, fill = Frequency)) +\n  geom_col(width = 0.7) +\n  scale_fill_gradient(low = \"#FEE6CE\", high = \"#E6550D\") +\n  labs(title = \"Global Feature Importance via LIME\", x = \"Feature\", y = \"Avg |Weight|\") +\n  coord_flip() +\n  theme_minimal() +\n  theme(plot.title = element_text(face = \"bold\", size = 14))\n\n\n\n\n\n\n\n\n\n\nGlobal LIME importance was calculated by averaging each feature’s absolute local weight across 100 test cases—plotted here as horizontal bars colored by how often each feature appeared—revealing that being a “ForeignWorker,” application “Status,” and “CreditHistory” drive the model most strongly, while factors like “ResidenceDuration” and “Age” contribute least.\n\n\n\n4.3.2 Top 5 Most Influential Features\n\n\n\n\n\n\nFeature\nImportance\nFrequency\n\n\n\n\nForeignWorker\n0.361\n1.00\n\n\nStatus\n0.201\n0.91\n\n\nCreditHistory\n0.120\n0.90\n\n\nDuration\n0.120\n0.60\n\n\nPurpose\n0.118\n0.57\n\n\n\n\n\n\n\n\n\n\n4.3.3 Impact Direction (% Positive vs Negative)\n\n\nCode\nimpact_tbl &lt;- lime_explanations %&gt;%\n  group_by(feature) %&gt;%\n  summarise(\n    Positive = mean(feature_weight &gt; 0) * 100,\n    Negative = mean(feature_weight &lt; 0) * 100,\n    .groups  = \"drop\"\n  ) %&gt;%\n  arrange(desc(Positive)) %&gt;%\n  slice_head(n = 5) %&gt;%\n  rename(Feature = feature)\n\nimpact_tbl %&gt;%\n  kable(\n    format  = \"html\",\n    digits  = 1,\n    align   = \"c\"\n  ) %&gt;%\n  kable_styling(\n    full_width        = FALSE,\n    bootstrap_options = c(\"striped\", \"hover\", \"condensed\", \"responsive\")\n  )\n\n\n\n\n\n\nFeature\nPositive\nNegative\n\n\n\n\nDuration\n81.7\n18.3\n\n\nProperty\n78.4\n21.6\n\n\nOtherDebtors\n72.0\n28.0\n\n\nStatus\n65.9\n34.1\n\n\nPurpose\n64.9\n35.1\n\n\n\n\n\n\n\n\n\nThe results show that foreign-worker status, application status, and credit history strongly affect credit risk predictions. However, practical factors like loan duration, having no collateral, and existing debts clearly signal higher risk. This means lenders should carefully consider these practical financial details when reviewing loan applications.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interpretability Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html",
+    "href": "conclusion.html",
+    "title": "5  Conclusion",
+    "section": "",
+    "text": "5.1 Limitations",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Conclusion</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html#limitations",
+    "href": "conclusion.html#limitations",
+    "title": "5  Conclusion",
+    "section": "",
+    "text": "One limitation of this project is the reliance on a relatively small and dated dataset, which may not fully reflect the complexity and diversity of modern credit environments. The features used are static and do not account for changes in borrower behavior or financial status over time, which could impact prediction accuracy in real-world applications. Additionally, while LIME and SHAP offer local and global interpretability, their effectiveness may be reduced when features are highly correlated or when model behavior is strongly nonlinear. Further work is needed to explore more advanced models and validate findings using larger and more representative datasets.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Conclusion</span>"
     ]
   }
 ]
