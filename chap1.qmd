@@ -73,7 +73,6 @@ tree_control <- rpart.control(
   xval = 10
 )
 
-# 5.2 模型训练
 tree_model <- rpart(
   CreditRisk ~ .,
   data = train_data,
@@ -82,11 +81,9 @@ tree_model <- rpart(
   control = tree_control
 )
 
-# 5.3 剪枝优化
 best_cp <- tree_model$cptable[which.min(tree_model$cptable[, "xerror"]), "CP"]
 pruned_tree <- prune(tree_model, cp = best_cp)
 
-# 5.4 可视化
 rpart.plot(pruned_tree, 
            type = 5, 
            extra = 106,
