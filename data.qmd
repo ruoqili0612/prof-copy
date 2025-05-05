@@ -1,5 +1,129 @@
 # Data
 
-## Description
+## Environment Setup
+```{r setup}
+library(cli)
+library(caret)     
+library(rpart)     
+library(rpart.plot) 
+library(DALEX)      
+library(lime)       
+library(ggplot2)  
+```
 
-## Missing value analysis
+## Data Loading and Preprocessing
+```{r}
+# Load the German credit dataset from the UCI repository
+url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data"
+data <- read.table(url, header = FALSE, stringsAsFactors = FALSE, strip.white = TRUE)
+
+# Assign descriptive column names
+col_names <- c(
+  "Status", "Duration", "CreditHistory", "Purpose", "CreditAmount", "Savings",
+  "EmploymentDuration", "InstallmentRate", "PersonalStatus", "OtherDebtors",
+  "ResidenceDuration", "Property", "Age", "OtherInstallmentPlans", "Housing",
+  "ExistingCreditsCount", "Job", "Dependents", "Telephone", "ForeignWorker", "CreditRisk"
+)
+names(data) <- col_names
+
+# Convert CreditRisk to a factor with levels Bad (2) and Good (1)
+data$CreditRisk <- factor(data$CreditRisk, 
+                         levels = c(2, 1), 
+                         labels = c("Bad", "Good"))  # 'Bad' is the class of interest
+
+# Specify which columns are categorical
+categorical_cols <- c(
+  "Status", "CreditHistory", "Purpose", "Savings", "EmploymentDuration",
+  "InstallmentRate", "PersonalStatus", "OtherDebtors", "ResidenceDuration",
+  "Property", "OtherInstallmentPlans", "Housing", "ExistingCreditsCount",
+  "Job", "Telephone", "ForeignWorker"
+)
+
+# Convert these columns to factors with simplified level names
+data[categorical_cols] <- lapply(data[categorical_cols], function(x) {
+  x <- as.factor(x)
+  levels(x) <- paste0("L", seq_along(levels(x)))  # Simplify factor levels to L1, L2, …
+  return(x)
+})
+```
+
+## Data Splitting
+```{r}
+set.seed(2023)
+train_idx <- createDataPartition(data$CreditRisk, 
+                                p = 0.7, 
+                                list = FALSE,
+                                times = 1)
+train_data <- data[train_idx, ]
+test_data <- data[-train_idx, ]
+
+# Remove factor columns that have only one level
+remove_single_level <- function(df) {
+  sapply(df, function(x) {
+    if(is.factor(x)) {
+      return(length(unique(x)) > 1)
+    } else {
+      return(TRUE)
+    }
+  })
+}
+
+valid_cols <- remove_single_level(train_data)
+train_data <- train_data[, valid_cols]
+test_data <- test_data[, colnames(train_data)]  # Keep feature set consistent
+
+# Validate class distribution
+cat("Training set distribution:\n")
+prop.table(table(train_data$CreditRisk))  # 应接近70% Good, 30% Bad
+cat("\nTest set distribution:\n")
+prop.table(table(test_data$CreditRisk))
+```
+
+## Description
+```{r}
+cli_h1("German Credit Dataset Description")
+
+cli_h2("Origin & File")
+cli_ul(c(
+  "`german.data`: Original dataset provided by Prof. Hofmann, containing mixed symbolic and categorical attributes for credit risk prediction"
+))
+
+cli_h2("Instances")
+cli_text("• 1,000 borrower records; each is one credit application.")
+
+cli_h2("Attributes (20 predictors + 1 target)")
+cli_ul(c(
+  "1. Status of existing checking account",
+  "2. Duration in months",
+  "3. Credit history",
+  "4. Purpose of the loan",
+  "5. Credit amount",
+  "6. Savings account / bonds",
+  "7. Present employment duration",
+  "8. Installment rate (% of disposable income)",
+  "9. Personal status and sex",
+  "10. Other debtors / guarantors",
+  "11. Present residence duration",
+  "12. Property ownership",
+  "13. Age in years",
+  "14. Other installment plans",
+  "15. Housing type",
+  "16. Number of existing credits at this bank",
+  "17. Job category (ordered)",
+  "18. Number of people liable for maintenance",
+  "19. Telephone availability (yes/no)",
+  "20. Foreign worker status (yes/no)",
+  "21. CreditRisk (target: Good vs. Bad)"
+))
+
+cli_h2("Target & Cost Matrix")
+cli_text("• Classes: 1 = Good, 2 = Bad")
+cli_text("")
+cli_text("  | Actual \\ Predicted | Good | Bad |")
+cli_text("  | :---: | :---: | :---: |")
+cli_text("  | **Good** | 0 | 1 |")
+cli_text("  | **Bad** | 5 | 0 |")
+
+cli_h2("Missing Values")
+cli_text("• None")
+```

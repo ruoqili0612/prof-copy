@@ -6,10 +6,10 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "Application of LIME and SHAP to Credit Scoring Models"
   author:
     - Ruoqi Li (rl3489)
-    - AUTHOR2 (UNI2)
+    - Yibing Liu (yl5714)
   repo-url: https://github.com/ruoqili0612/prof-copy
   date: today
   page-footer:
