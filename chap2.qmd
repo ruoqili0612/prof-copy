@@ -82,7 +82,7 @@ plot_features(lime_explanation_tree) +
   ggtitle("LIME Explanation for Decision Tree (Test Sample 1)") +
   theme_minimal()
 ```
--   LIME was applied to the pruned decision tree for a single test case to show which features support or contradict its “Good” prediction—here, a low application status (Status = L1) strongly contradicts the Good outcome, while strong savings (Savings = L5), shorter loan duration (Duration ≤ 12), excellent credit history (CreditHistory = L5), and housing status (Housing = L2) all contribute in favor of predicting “Good.”
+-   LIME was applied to the pruned decision tree for a single test case to show which features support or contradict its “Good” prediction—here, a low application status (Status = L1) strongly contradicts the Good outcome, while strong savings (Savings = L5), shorter loan duration (Duration ≤ 12), excellent credit history (CreditHistory = L5), and housing status (Housing = L2) all contribute in favor of predicting “Good”.
 
 ## Global LIME Analysis for Logistic Regression
 -   Retrain the logistic model (after dropping a column), register it with LIME, and generate explanations across the first 100 test instances to capture global patterns in feature contributions.

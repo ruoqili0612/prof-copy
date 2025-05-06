@@ -84,7 +84,7 @@
     "href": "data.html#data-loading-and-preprocessing",
     "title": "2  Data",
     "section": "",
-    "text": "Assign descriptive column names matching the project proposal’s features.\nConvert the target ‘CreditRisk’ to a two‐level factor (“Bad” vs “Good”), focusing on the “Bad” class as the event of interest.\nIdentify categorical columns and convert them into unordered factors with simplified level labels (L1, L2, …) to prepare for modeling\n\n\n\n2.1.1 Summary data after preprocessing",
+    "text": "Assign descriptive column names matching the project proposal’s features.\nConvert the target ‘CreditRisk’ to a two‐level factor (“Bad” vs “Good”), focusing on the “Bad” class as the event of interest.\nIdentify categorical columns and convert them into unordered factors with simplified level labels (L1, L2, …) to prepare for modeling.\n\n\n\n2.1.1 Summary data after preprocessing",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
@@ -134,7 +134,7 @@
     "href": "chap1.html#decision-tree-model",
     "title": "3  Modeling",
     "section": "3.2 Decision Tree Model",
-    "text": "3.2 Decision Tree Model\n\nDefine tree complexity and cross‐validation parameters.\nTrain a classification tree using information‐gain splits.\nPrune the tree at the CP value minimizing cross‐validated error.\nVisualize the pruned tree to inspect decision rules and compare to LIME/SHAP explanations.\n\n\n\nCode\nlibrary(rpart)\nlibrary(rpart.plot)\ntree_control &lt;- rpart.control(\n  minsplit = 20,\n  minbucket = round(20/3),\n  cp = 0.005,\n  maxdepth = 4,\n  xval = 10\n)\n\n# 5.2 模型训练\ntree_model &lt;- rpart(\n  CreditRisk ~ .,\n  data = train_data,\n  method = \"class\",\n  parms = list(split = \"information\"),\n  control = tree_control\n)\n\n# 5.3 剪枝优化\nbest_cp &lt;- tree_model$cptable[which.min(tree_model$cptable[, \"xerror\"]), \"CP\"]\npruned_tree &lt;- prune(tree_model, cp = best_cp)\n\n# 5.4 可视化\nrpart.plot(pruned_tree, \n           type = 5, \n           extra = 106,\n           box.palette = \"GnBu\",\n           shadow.col = \"gray\")\n\n\n\n\n\n\n\n\n\n\n     classification rules for decision tree\nStatus\nDuration\nSavings\nCreditHistory",
+    "text": "3.2 Decision Tree Model\n\nDefine tree complexity and cross‐validation parameters.\nTrain a classification tree using information‐gain splits.\nPrune the tree at the CP value minimizing cross‐validated error.\nVisualize the pruned tree to inspect decision rules and compare to LIME/SHAP explanations.\n\n\n\nCode\nlibrary(rpart)\nlibrary(rpart.plot)\ntree_control &lt;- rpart.control(\n  minsplit = 20,\n  minbucket = round(20/3),\n  cp = 0.005,\n  maxdepth = 4,\n  xval = 10\n)\n\ntree_model &lt;- rpart(\n  CreditRisk ~ .,\n  data = train_data,\n  method = \"class\",\n  parms = list(split = \"information\"),\n  control = tree_control\n)\n\nbest_cp &lt;- tree_model$cptable[which.min(tree_model$cptable[, \"xerror\"]), \"CP\"]\npruned_tree &lt;- prune(tree_model, cp = best_cp)\n\nrpart.plot(pruned_tree, \n           type = 5, \n           extra = 106,\n           box.palette = \"GnBu\",\n           shadow.col = \"gray\")\n\n\n\n\n\n\n\n\n\n\n     classification rules for decision tree\nStatus\nDuration\nSavings\nCreditHistory",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Modeling</span>"
     ]
@@ -174,7 +174,7 @@
     "href": "chap2.html#configure-lime-for-decision-tree",
     "title": "4  Interpretability Analysis",
     "section": "4.2 Configure LIME for Decision Tree",
-    "text": "4.2 Configure LIME for Decision Tree\n\nDefine the model_type and predict_model methods so that LIME knows how to call our pruned rpart tree and obtain class‐probability outputs.\n\n\n\nCode\nlibrary(lime)\nmodel_type.rpart &lt;- function(x, ...) \"classification\"\npredict_model.rpart &lt;- function(model, newdata, ...) {\n  as.data.frame(predict(model, newdata = newdata, type = \"prob\"))\n}\n\n\n\n4.2.1 Local LIME Explanation for Decision Tree\n\n\nCode\nlime_explainer_tree &lt;- lime(\n  x     = train_data[, setdiff(names(train_data), \"CreditRisk\")],\n  model = pruned_tree,\n  bin_continuous = TRUE\n)\nlime_explanation_tree &lt;- lime::explain(\n  x         = test_data[1, setdiff(names(test_data), \"CreditRisk\"), drop = FALSE],\n  explainer = lime_explainer_tree,\n  n_features = 5,\n  n_labels   = 1\n)\nplot_features(lime_explanation_tree) +\n  ggtitle(\"LIME Explanation for Decision Tree (Test Sample 1)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nLIME was applied to the pruned decision tree for a single test case to show which features support or contradict its “Good” prediction—here, a low application status (Status = L1) strongly contradicts the Good outcome, while strong savings (Savings = L5), shorter loan duration (Duration ≤ 12), excellent credit history (CreditHistory = L5), and housing status (Housing = L2) all contribute in favor of predicting “Good.”",
+    "text": "4.2 Configure LIME for Decision Tree\n\nDefine the model_type and predict_model methods so that LIME knows how to call our pruned rpart tree and obtain class‐probability outputs.\n\n\n\nCode\nlibrary(lime)\nmodel_type.rpart &lt;- function(x, ...) \"classification\"\npredict_model.rpart &lt;- function(model, newdata, ...) {\n  as.data.frame(predict(model, newdata = newdata, type = \"prob\"))\n}\n\n\n\n4.2.1 Local LIME Explanation for Decision Tree\n\n\nCode\nlime_explainer_tree &lt;- lime(\n  x     = train_data[, setdiff(names(train_data), \"CreditRisk\")],\n  model = pruned_tree,\n  bin_continuous = TRUE\n)\nlime_explanation_tree &lt;- lime::explain(\n  x         = test_data[1, setdiff(names(test_data), \"CreditRisk\"), drop = FALSE],\n  explainer = lime_explainer_tree,\n  n_features = 5,\n  n_labels   = 1\n)\nplot_features(lime_explanation_tree) +\n  ggtitle(\"LIME Explanation for Decision Tree (Test Sample 1)\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\nLIME was applied to the pruned decision tree for a single test case to show which features support or contradict its “Good” prediction—here, a low application status (Status = L1) strongly contradicts the Good outcome, while strong savings (Savings = L5), shorter loan duration (Duration ≤ 12), excellent credit history (CreditHistory = L5), and housing status (Housing = L2) all contribute in favor of predicting “Good”.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interpretability Analysis</span>"
     ]
@@ -205,6 +205,16 @@
     "title": "5  Conclusion",
     "section": "",
     "text": "One limitation of this project is the reliance on a relatively small and dated dataset, which may not fully reflect the complexity and diversity of modern credit environments. The features used are static and do not account for changes in borrower behavior or financial status over time, which could impact prediction accuracy in real-world applications. Additionally, while LIME and SHAP offer local and global interpretability, their effectiveness may be reduced when features are highly correlated or when model behavior is strongly nonlinear. Further work is needed to explore more advanced models and validate findings using larger and more representative datasets.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Conclusion</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html#reference-and-dataset",
+    "href": "conclusion.html#reference-and-dataset",
+    "title": "5  Conclusion",
+    "section": "5.2 Reference and Dataset",
+    "text": "5.2 Reference and Dataset\n\nDataset： \nhttps://archive.ics.uci.edu/dataset/144/statlog+german+credit+data\nReferences:\nExplainability of a Machine Learning Granting Scoring Model in Peer-to-Peer Lending.\n\nAriza-Garzón, M. J., Arroyo, J., Caparrini, A., & Segovia-Vargas, M. (2020).\nhttps://doi.org/10.1109/ACCESS.2020.2984412\n\nThe Use of the Area Under the ROC Curve in the Evaluation of Machine Learning Algorithms.\nBradley, A. P. (1997).\nhttps://doi.org/10.1016/s0031-3203(96)00142-2\nRandom Forests. Machine Learning.\nBreiman, L. (2001).\nhttps://link.springer.com/article/10.1023/A:1010933404324\nExplainable Machine Learning in Credit Risk Management.\nBussmann, N., Giudici, P., Marinelli, D., & Papenbrock, J. (2021).\nhttps://doi.org/10.1007/s10614-020-10042-0",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Conclusion</span>"
     ]

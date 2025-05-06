@@ -1,6 +1,47 @@
 # Conclusion
+
 -   This project demonstrates how interpretable machine learning methods like LIME and SHAP can be effectively applied to credit scoring models to improve both performance and transparency. Among the models tested, logistic regression proved to be more reliable than the decision tree, especially in identifying high-risk applicants. Key features such as application status, credit history, loan duration, and installment rate were found to have the greatest influence on predictions. The interpretability results also show that practical financial factors like longer repayment periods, lack of collateral, and additional debt obligations play a consistent role in pushing predictions toward high risk. Overall, this approach supports more informed and responsible decision-making in credit risk assessment by combining strong model performance with clear explanations.
 
 ## Limitations
 
 -   One limitation of this project is the reliance on a relatively small and dated dataset, which may not fully reflect the complexity and diversity of modern credit environments. The features used are static and do not account for changes in borrower behavior or financial status over time, which could impact prediction accuracy in real-world applications. Additionally, while LIME and SHAP offer local and global interpretability, their effectiveness may be reduced when features are highly correlated or when model behavior is strongly nonlinear. Further work is needed to explore more advanced models and validate findings using larger and more representative datasets.
+
+## Reference and Dataset
+
+-   
+
+    ```         
+    Dataset： 
+    ```
+
+-   https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
+
+-   
+
+    ```         
+    References:
+    ```
+
+-   Explainability of a Machine Learning Granting Scoring Model in Peer-to-Peer Lending.
+
+Ariza-Garzón, M. J., Arroyo, J., Caparrini, A., & Segovia-Vargas, M. (2020).
+
+https://doi.org/10.1109/ACCESS.2020.2984412
+
+-   The Use of the Area Under the ROC Curve in the Evaluation of Machine Learning Algorithms.
+
+    Bradley, A. P. (1997).
+
+    https://doi.org/10.1016/s0031-3203(96)00142-2
+
+-   Random Forests. Machine Learning.
+
+    Breiman, L. (2001).
+
+    https://link.springer.com/article/10.1023/A:1010933404324
+
+-   Explainable Machine Learning in Credit Risk Management.
+
+    Bussmann, N., Giudici, P., Marinelli, D., & Papenbrock, J. (2021).
+
+    https://doi.org/10.1007/s10614-020-10042-0
